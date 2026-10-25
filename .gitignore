@@ -16,8 +16,9 @@ env/
 .env
 .env.*
 
-# --- Notebooks (the project is notebook-free) ---
+# --- Notebooks: only the original research notebooks in notebooks/ are versioned ---
 *.ipynb
+!notebooks/*.ipynb
 .ipynb_checkpoints/
 
 # --- Data: never committed (private TouNum dataset, MS COCO licence) ---

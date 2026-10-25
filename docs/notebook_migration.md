@@ -2,7 +2,7 @@
 
 Source of truth: `livrable1_groupe2_classification_photo_autre.ipynb`,
 `Livrable_2_Debruitage_2.ipynb`, `Livrable_3_Captioning.ipynb` (all cells and outputs read).
-The notebooks are **not** part of this repository.
+The notebooks are kept unchanged in `notebooks/` for reference; the package does not use them.
 
 ## 1. Pipeline reconstructed from the notebooks
 

@@ -5,7 +5,8 @@
 Built with TensorFlow / Keras. This repository is the production-grade refactor of three
 research notebooks from an engineering-school group project (CESI, *TouNum* case study):
 the experiments were turned into a tested, configurable and reproducible Python package
-with a command-line interface, **with no notebook left**.
+with a command-line interface. The package does not depend on any notebook; the original
+notebooks are kept in [`notebooks/`](notebooks/) for reference, with their executed outputs.
 
 ```text
 scanned image ──► 1. Photo or other? ──► 2. Denoising ──► 3. Caption
@@ -99,7 +100,7 @@ Detailed design and data flow: [`docs/architecture.md`](docs/architecture.md).
 
 ## 6. Results
 
-> These figures are the outputs of the **original notebooks**, run by the project team on the
+> These figures are the outputs of the **original notebooks** (see [`notebooks/`](notebooks/)), run by the project team on the
 > full datasets (GPU). They were **not re-run** during this refactor, because the private
 > datasets and the ImageNet weights are not available in the refactoring environment.
 > Re-running `tounum <module> train` writes fresh metrics to `artifacts/<module>/<run>/metrics.json`.
@@ -202,6 +203,7 @@ tounum-vision-pipeline/
 ├── docs/
 │   ├── architecture.md          # design and data flow
 │   └── notebook_migration.md    # what changed vs. the notebooks, and why
+├── notebooks/                   # original research notebooks (reference only, with outputs)
 ├── src/tounum/
 │   ├── config.py                # typed config, validation, path resolution
 │   ├── cli.py                   # `tounum` command
