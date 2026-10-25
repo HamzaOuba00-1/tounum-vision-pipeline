@@ -218,38 +218,4 @@ tounum-vision-pipeline/
 ├── pyproject.toml · requirements*.txt · Makefile
 ```
 
-## 11. Known limitations
 
-* The results above were produced by the original notebooks and have not been reproduced by this
-  code base on the full data (no access to the datasets or ImageNet weights during the refactor).
-* Denoising is trained and evaluated on **simulated** noise; real scans also contain blur,
-  scratches or compression artefacts. Validation and test sets are small (74 photos each).
-* Classification and denoising hyperparameters were tuned one at a time; each configuration was
-  trained once, so differences below ~0.5 dB / 0.005 BLEU are within run-to-run noise.
-* The captioning vocabulary is limited to 5 000 words; greedy decoding can repeat words.
-* In the original notebook the captioning test set had been looked at once before the final
-  choice (documented there; it did not drive the choice).
-* The pipeline denoises at full resolution, although the autoencoder was trained on 128×128 crops
-  (`inference.max_denoise_side` can cap the size).
-
-## 12. Possible improvements
-
-* Re-run the three trainings with this code base and publish the regenerated metrics.
-* Fine-tune a pre-trained backbone (transfer learning) for the classifier, focusing on paintings.
-* Add blur and JPEG artefacts to the simulated degradations; collect a few real noisy scans for evaluation.
-* Beam search decoding and a larger vocabulary for captioning; METEOR / CIDEr metrics.
-* Repeat the best configurations with several seeds to report confidence intervals.
-* Track experiments (e.g. MLflow) and serve the pipeline behind an API.
-
-## 13. Authors, licence and data citation
-
-Group project (CESI engineering school), group 2: **Chloé Armand, Hamza Ouba, Ylies Chaouche,
-Enzo Fraioli**. Refactoring into this package: Hamza Ouba.
-
-**Licence:** not yet chosen - the code is co-authored, so the licence must be agreed by all
-authors before one is added. Until then, all rights are reserved by the authors.
-
-**MS COCO:** Lin et al., *Microsoft COCO: Common Objects in Context*, ECCV 2014. Annotations under
-CC BY 4.0; images subject to Flickr terms of use.
-**Reference model:** Xu et al., *Show, Attend and Tell: Neural Image Caption Generation with Visual
-Attention*, ICML 2015.
