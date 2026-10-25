@@ -1,0 +1,95 @@
+# =====================================================================
+# TouNum vision pipeline - central configuration
+#
+# Relative paths are resolved against `paths.root`, which is itself
+# relative to THIS file. The pipeline therefore does not depend on the
+# directory it is launched from.
+#
+# Default values reproduce the settings of the original notebooks
+# (Livrable 1, 2 and 3). See docs/notebook_migration.md.
+# =====================================================================
+
+seed: 42
+
+paths:
+  root: ..                                   # repository root (relative to this file)
+  classification_data: data/raw/classification   # Painting/ Photo/ Schematics/ Sketch/ Text/
+  denoising_train_data: data/raw/classification/Photo  # training photos (L1 "Photo" class)
+  denoising_eval_data: data/raw/denoising     # validation + test photos (L2 dataset)
+  coco_annotations: data/raw/coco/annotations/captions_train2014.json
+  coco_images: data/raw/coco/train2014
+  interim: data/interim                      # resized-image caches, CNN features
+  artifacts: artifacts                       # one sub-folder per training run
+
+classification:
+  source_classes: [Painting, Photo, Schematics, Sketch, Text]
+  positive_class: Photo                      # label 1; every other class is label 0
+  image_extensions: [.jpg, .jpeg, .png, .bmp, .webp]
+  known_invalid_files: [Painting/painting_02662.jpg]   # excluded in the notebook (corrupted)
+  image_size: [180, 180]
+  data_fraction: 1.0                         # < 1.0 for a quick stratified sub-sample
+  val_fraction: 0.15
+  test_fraction: 0.15
+  batch_size: 32
+  max_epochs: 40
+  learning_rate: 0.0003
+  clipnorm: 1.0
+  cache_workers: 8
+  # Candidate architectures, compared on the validation set (F1 macro at 0.5)
+  candidates:
+    - {name: cnn_reference, variant: reference, early_stopping_start_epoch: 0}
+    - {name: cnn_regularized, variant: regularized, early_stopping_start_epoch: 0}
+    - {name: cnn_4_blocks, variant: four_blocks, early_stopping_start_epoch: 15}
+  enriched_augmentation: false               # notebook flag AUGMENTATION_ENRICHIE
+  threshold_grid: {start: 0.10, stop: 0.90, num: 81}
+  reduce_lr: {factor: 0.5, patience: 2, min_delta: 0.001, min_lr: 1.0e-6}
+  early_stopping: {patience: 5, min_delta: 0.001}
+
+denoising:
+  image_size: 128
+  image_extensions: [.jpg, .jpeg, .png]
+  max_train_images: 4000
+  batch_size: 32
+  max_epochs: 25
+  early_stopping_patience: 4
+  duplicate_threshold: 0.02                  # mean abs. difference of 16x16 grey thumbnails
+  noise_levels:
+    gaussian:     {low: 0.05, medium: 0.10, high: 0.20}
+    salt_pepper:  {low: 0.02, medium: 0.05, high: 0.10}
+    speckle:      {low: 0.10, medium: 0.25, high: 0.50}
+  val_noise_seed: 1000
+  test_noise_seed: 2000
+  # Final model selected in the notebook
+  architecture: A2_unet                      # A0_base | A1_wide | A2_unet | A3_strided
+  loss: mse                                  # binary_crossentropy | mse | mae
+  learning_rate: 0.003
+  train_noise: mixed                         # gaussian | salt_pepper | speckle | mixed
+  # Architectures compared by `tounum denoise compare` (gaussian noise, BCE, lr 0.001)
+  compare_architectures: [A0_base, A1_wide, A2_unet, A3_strided]
+
+captioning:
+  n_test: 1000
+  n_val: 1000
+  n_train: 40000
+  vocab_size: 5000                           # TOP_K most frequent training words
+  max_len_percentile: 99
+  feature_batch_size: 16
+  max_epochs: 30
+  patience: 3                                # early stopping on validation BLEU-4
+  decoding: greedy                           # greedy | sample
+  generation_batch_size: 250
+  model:                                     # architecture B, tuned (final model)
+    cnn: InceptionResNetV2                   # InceptionV3 (architecture A) | InceptionResNetV2
+    rnn: lstm                                # gru | lstm
+    initial_state: true                      # initial RNN state computed from the photo
+    units: 512
+    embedding_dim: 256
+    dropout: 0.5
+    learning_rate: 0.001
+    batch_size: 64
+
+inference:
+  classifier_run: null                       # path to a classification run (artifacts/...)
+  denoiser_run: null
+  captioner_run: null
+  max_denoise_side: null                     # null = denoise at full resolution (notebook behaviour)

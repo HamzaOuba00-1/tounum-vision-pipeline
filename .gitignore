@@ -1,0 +1,45 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Environments and secrets ---
+.venv/
+venv/
+env/
+.env
+.env.*
+
+# --- Notebooks (the project is notebook-free) ---
+*.ipynb
+.ipynb_checkpoints/
+
+# --- Data: never committed (private TouNum dataset, MS COCO licence) ---
+data/raw/*
+data/interim/*
+data/processed/*
+!data/**/.gitkeep
+!data/README.md
+
+# --- Trained models and run outputs ---
+artifacts/*
+!artifacts/.gitkeep
+*.keras
+*.h5
+*.npy
+
+# --- Pipeline outputs ---
+results/
+outputs/
+
+# --- OS / editors ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
